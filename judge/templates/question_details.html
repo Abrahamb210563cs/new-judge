@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ question.name }}</title>
+    {% load static %}
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="{% static 'style.css' %}">
+    <style>
+        body {
+            background-color: #f8f9fa; /* Light gray background */
+            color: #343a40; /* Dark text color */
+            font-family: Arial, sans-serif;
+        }
+        .container {
+            background-color: #fff; /* White background */
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            position: relative;
+        }
+        .logout-box {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+        }
+        h1 {
+            color: #080b0e; /* Blue header */
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .card {
+            margin-bottom: 20px;
+            border: 1px solid #dee2e6; /* Light gray border */
+            border-radius: 5px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        .card-body {
+            padding: 20px;
+        }
+        .card-title {
+            color: #e51d1d; /* Blue card title */
+            font-size: 1.25rem;
+            margin-bottom: 15px;
+        }
+        .card-text {
+            color: #495057; /* Dark gray card text */
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        .btn-primary {
+            background-color: #007bff; /* Blue submit button */
+            border-color: #007bff;
+        }
+        .btn-primary:hover {
+            background-color: #0056b3; /* Darker blue on hover */
+            border-color: #0056b3;
+        }
+        .output-title {
+            margin-top: 20px;
+            color: #28a745; /* Green output title */
+        }
+        .output-box {
+            background-color: #f8f9fa; /* Light gray output box */
+            padding: 15px;
+            border: 1px solid #dee2e6;
+            border-radius: 5px;
+            white-space: pre-wrap;
+        }
+        .verdict {
+            margin-top: 20px;
+            font-size: 1.25rem;
+            font-weight: bold;
+        }
+        .verdict-accepted {
+            color: #28a745; /* Green text for accepted verdict */
+        }
+        .verdict-rejected {
+            color: #dc3545; /* Red text for rejected verdict */
+        }
+    </style>
+</head>
+<body>
+    <div class="container mt-5">
+        <div class="logout-box">
+            <a href="/auth/logout/" class="btn btn-danger">Logout</a>
+        </div>
+        <h1>{{ question.name }}</h1>
+        <div class="row">
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Statement</h5>
+                        <p class="card-text">{{ question.statement }}</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <h2 class="text-center">Submit Your Code</h2>
+                <form method="post" class="needs-validation" novalidate>
+                    {% csrf_token %}
+                    <div class="form-group">
+                        {{ form.language.label_tag }}
+                        {{ form.language }}
+                    </div>
+                    <div class="form-group">
+                        {{ form.code.label_tag }}
+                        {{ form.code }}
+                    </div>
+                    <div class="form-group">
+                        {{ form.input_data.label_tag }}
+                        {{ form.input_data }}
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-block">Submit Code</button>
+                </form>
+                {% if output %}
+                    <h5 class="output-title">OUTPUT</h5>
+                    <div class="output-box">
+                        <pre>{{ output }}</pre>
+                    </div>
+                {% endif %}
+                {% if verdict %}
+                    <div class="verdict {% if verdict == 'Accepted' %}verdict-accepted{% else %}verdict-rejected{% endif %}">
+                        <h5 class="output-title">Verdict: {{ verdict }}</h5>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>

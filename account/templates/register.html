@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet">
+    <title>Registration Form</title>
+    <style>
+        body {
+            background: linear-gradient(to right, #b511cb, #2575fc);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden; /* Ensure no scrollbars appear */
+        }
+
+        @keyframes float {
+            0% {
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(-20px);
+            }
+            100% {
+                transform: translateY(0);
+            }
+        }
+
+        .floating-background {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            z-index: -1;
+        }
+
+        .floating-background span {
+            position: absolute;
+            display: block;
+            width: 20px;
+            height: 20px;
+            background: rgba(255, 255, 255, 0.1);
+            box-shadow: 0 0 10px rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            animation: float 4s infinite ease-in-out;
+        }
+
+        .floating-background span:nth-child(1) {
+            top: 20%;
+            left: 25%;
+            width: 30px;
+            height: 30px;
+            animation-duration: 6s;
+        }
+
+        .floating-background span:nth-child(2) {
+            top: 70%;
+            left: 15%;
+            width: 50px;
+            height: 50px;
+            animation-duration: 8s;
+        }
+
+        .floating-background span:nth-child(3) {
+            top: 50%;
+            left: 75%;
+            width: 40px;
+            height: 40px;
+            animation-duration: 5s;
+        }
+
+        .floating-background span:nth-child(4) {
+            top: 10%;
+            left: 50%;
+            width: 20px;
+            height: 20px;
+            animation-duration: 7s;
+        }
+
+        .floating-background span:nth-child(5) {
+            top: 80%;
+            left: 80%;
+            width: 60px;
+            height: 60px;
+            animation-duration: 9s;
+        }
+
+        .card {
+            border-radius: 15px;
+            background: #333;
+            color: #fff;
+            z-index: 1;
+        }
+
+        .btn-primary {
+            background-color: #6a11cb;
+            border-color: #6a11cb;
+        }
+
+        .btn-primary:hover {
+            background-color: #2575fc;
+            border-color: #2575fc;
+        }
+
+        .form-control {
+            background: #555;
+            color: #fff;
+            border: 1px solid #444;
+        }
+
+        .form-control:focus {
+            background: #666;
+            color: #fff;
+            border-color: #17fffb;
+            box-shadow: 0 0 0 0.2rem rgba(205, 114, 185, 0.25);
+        }
+
+        .card-header {
+            background: #6a11cb;
+            color: #fff;
+            border-bottom: 0;
+            border-radius: 15px 15px 0 0;
+            text-align: center;
+        }
+
+        .card-header h1 span {
+            color: #fff;
+        }
+
+        .button {
+            position: relative;
+            width: 120px;
+            height: 40px;
+            background-color: #000;
+            display: flex;
+            align-items: center;
+            color: white;
+            flex-direction: column;
+            justify-content: center;
+            border: none;
+            padding: 12px;
+            gap: 12px;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+
+        .button::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            left: -4px;
+            top: -1px;
+            margin: auto;
+            width: 128px;
+            height: 48px;
+            border-radius: 10px;
+            background: linear-gradient(-45deg, #e81cff 0%, #40c9ff 100%);
+            z-index: -10;
+            pointer-events: none;
+            transition: all 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .button::after {
+            content: "";
+            z-index: -1;
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(-45deg, #fc00ff 0%, #00dbde 100%);
+            transform: translate3d(0, 0, 0) scale(0.95);
+            filter: blur(20px);
+        }
+
+        .button:hover::after {
+            filter: blur(30px);
+        }
+
+        .button:hover::before {
+            transform: rotate(-180deg);
+        }
+
+        .button:active::before {
+            scale: 0.7;
+        }
+    </style>
+</head>
+<body>
+    <div class="floating-background">
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+    </div>
+    <div class="container">
+        <!-- Registration form -->
+        <form class="col-12 col-md-8 col-lg-6 mx-auto card p-4 shadow-lg" method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            <!-- CSRF token for security -->
+
+            <div class="card-header">
+                <!-- Registration form heading -->
+                <h1><span></span> JudgeNgine</h1>
+            </div>
+
+            <div class="card-body">
+                <h3 class="text-center">Register</h3>
+                <hr />
+                <!-- Display error/success messages -->
+                {% if messages %}
+                <div class="alert alert-primary" role="alert">
+                    {% for message in messages %} {{ message }} {% endfor %}
+                </div>
+                {% endif %}
+
+                <!-- Username input field -->
+                <div class="form-group">
+                    <label for="username">Username</label>
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">
+                                <i class="fas fa-user"></i>
+                            </span>
+                        </div>
+                        <input type="text" class="form-control" name="username" id="username" placeholder="Enter username" required />
+                    </div>
+                </div>
+
+                <!-- Password input field -->
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">
+                                <i class="fas fa-lock"></i>
+                            </span>
+                        </div>
+                        <input type="password" class="form-control" name="password" id="password" placeholder="Enter password" required />
+                    </div>
+                </div>
+
+                <!-- Link to login page for users who already have an account -->
+                <p class="text-center">
+                    Already have an account? <a href="/auth/login/">Login</a>
+                </p>
+
+                <!-- Submit button -->
+                <div class="d-flex justify-content-center">
+                    <button type="submit" class="button">
+                        Register
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js" integrity="sha384-ZvpUoO/+P5yXv6ftKdP/y8OM77o9H6i+kJQ1g7KkWJ3LFDT/p/4Ym5IxxW+QF0iL" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js" integrity="sha384-LtrjvnR4/Jds5HR8vN5KoIIN4U8PK/6ojAY/pU9S1lLI4Q5bUmgLD9tydLz9Hg5e" crossorigin="anonymous"></script>
+</body>
+</html>
