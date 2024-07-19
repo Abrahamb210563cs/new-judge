@@ -19,6 +19,7 @@
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
             padding: 20px;
             position: relative;
+            margin-top: 20px;
         }
         .logout-box {
             position: absolute;
@@ -91,10 +92,10 @@
     </style>
 </head>
 <body>
+    <div class="logout-box">
+        <a href="/auth/logout/" class="btn btn-danger">Logout</a>
+    </div>
     <div class="container mt-5">
-        <div class="logout-box">
-            <a href="/auth/logout/" class="btn btn-danger">Logout</a>
-        </div>
         <h1>{{ question.name }}</h1>
         <div class="row">
             <div class="col-md-6">
