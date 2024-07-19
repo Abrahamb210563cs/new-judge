@@ -58,6 +58,14 @@
             background-color: #0056b3; /* Darker blue on hover */
             border-color: #0056b3;
         }
+        .btn-success {
+            background-color: #28a745; /* Green submit button */
+            border-color: #28a745;
+        }
+        .btn-success:hover {
+            background-color: #218838; /* Darker green on hover */
+            border-color: #218838;
+        }
         .output-title {
             margin-top: 20px;
             color: #28a745; /* Green output title */
@@ -99,7 +107,7 @@
             </div>
             <div class="col-md-6">
                 <h2 class="text-center">Submit Your Code</h2>
-                <form method="post" class="needs-validation" novalidate>
+                <form method="post" id="codeForm" class="needs-validation" novalidate>
                     {% csrf_token %}
                     <div class="form-group">
                         {{ form.language.label_tag }}
@@ -113,24 +121,48 @@
                         {{ form.input_data.label_tag }}
                         {{ form.input_data }}
                     </div>
-                    <button type="submit" class="btn btn-primary btn-block">Submit Code</button>
+                    <button type="button" class="btn btn-primary btn-block" id="runButton">Run Code</button>
+                    <button type="submit" name="submit" class="btn btn-success btn-block">Submit Code</button>
                 </form>
-                {% if output %}
-                    <h5 class="output-title">OUTPUT</h5>
-                    <div class="output-box">
-                        <pre>{{ output }}</pre>
-                    </div>
-                {% endif %}
-                {% if verdict %}
-                    <div class="verdict {% if verdict == 'Accepted' %}verdict-accepted{% else %}verdict-rejected{% endif %}">
-                        <h5 class="output-title">Verdict: {{ verdict }}</h5>
-                    </div>
-                {% endif %}
+                <div id="outputSection">
+                    {% if output %}
+                        <h5 class="output-title">OUTPUT</h5>
+                        <div class="output-box">
+                            <pre>{{ output }}</pre>
+                        </div>
+                    {% endif %}
+                    {% if verdict %}
+                        <div class="verdict {% if verdict == 'Accepted' %}verdict-accepted{% else %}verdict-rejected{% endif %}">
+                            <h5 class="output-title">Verdict: {{ verdict }}</h5>
+                        </div>
+                    {% endif %}
+                </div>
             </div>
         </div>
     </div>
-    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            $('#runButton').click(function() {
+                $.ajax({
+                    type: 'POST',
+                    url: '',
+                    data: $('#codeForm').serialize() + '&run=1',
+                    dataType: 'json',
+                    success: function(response) {
+                        $('#outputSection').html(
+                            '<h5 class="output-title">OUTPUT</h5>' +
+                            '<div class="output-box"><pre>' + response.output + '</pre></div>'
+                        );
+                    },
+                    error: function() {
+                        alert('There was an error running the code.');
+                    }
+                });
+            });
+        });
+    </script>
 </body>
 </html>

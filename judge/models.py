@@ -35,4 +35,3 @@ class CodeSubmission(models.Model):
     code = models.TextField()
     timestamp = models.DateTimeField(auto_now_add=True)
     verdict = models.CharField(max_length=20, null=True, blank=True)
-

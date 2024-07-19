@@ -1,6 +1,5 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from django.http import HttpResponse
-from django.template import loader
+from django.http import JsonResponse
 from django.contrib.auth.decorators import login_required
 from judge.models import Question, CodeSubmission
 from judge.forms import CodeSubmissionForm
@@ -16,10 +15,7 @@ def all_questions(request):
     context = {
         'questions': questions,
     }
-    template = loader.get_template('all_question.html')
-    return HttpResponse(template.render(context, request))
-
-
+    return render(request, 'all_question.html', context)
 
 @login_required
 def question_details(request, question_id):
@@ -28,28 +24,42 @@ def question_details(request, question_id):
     verdict = None
 
     if request.method == 'POST':
-        form = CodeSubmissionForm(request.POST)
-        if form.is_valid():
-            submission = form.save(commit=False)
-            submission.question = question
-            submission.user = request.user
-            output = run_code(submission.language, submission.code, submission.input_data)
-            submission.output_data = output
-            submission.save()
-            verdict = check_test_cases(submission)
-            submission.verdict = verdict
-            submission.save()
+        if 'run' in request.POST:
+            form = CodeSubmissionForm(request.POST)
+            if form.is_valid():
+                language = form.cleaned_data['language']
+                code = form.cleaned_data['code']
+                input_data = form.cleaned_data['input_data']
+                output = run_code(language, code, input_data)
+                return JsonResponse({'output': output})
+
+        elif 'submit' in request.POST:
+            form = CodeSubmissionForm(request.POST)
+            if form.is_valid():
+                submission = form.save(commit=False)
+                submission.question = question
+                submission.user = request.user
+                submission.output_data = run_code(submission.language, submission.code, submission.input_data)
+                submission.save()
+                verdict = check_test_cases(submission)
+                submission.verdict = verdict
+                submission.save()
+                context = {
+                    'question': question,
+                    'form': form,
+                    'output': submission.output_data,
+                    'verdict': verdict,
+                }
+                return render(request, 'question_details.html', context)
+
     else:
         form = CodeSubmissionForm()
 
     context = {
         'question': question,
         'form': form,
-        'output': output,
-        'verdict': verdict,
     }
     return render(request, 'question_details.html', context)
-
 
 def run_code(language, code, input_data):
     project_path = Path(settings.BASE_DIR)
@@ -128,4 +138,3 @@ def check_test_cases(code_submission):
             break
             
     return verdict
-
