@@ -76,7 +76,9 @@ def run_code(language, code, input_data):
 
     unique = str(uuid.uuid4())
 
-    code_file_name = f"{unique}.{language}"
+    # File extensions based on language
+    ext_map = {"cpp": "cpp", "py": "py", "c": "c"}
+    code_file_name = f"{unique}.{ext_map[language]}"
     input_file_name = f"{unique}.txt"
     output_file_name = f"{unique}.txt"
 
@@ -90,10 +92,26 @@ def run_code(language, code, input_data):
     with open(input_file_path, "w") as input_file:
         input_file.write(input_data)
 
+    # Compile and run based on language
     if language == "cpp":
         executable_path = codes_dir / unique
         compile_result = subprocess.run(
             ["g++", str(code_file_path), "-o", str(executable_path)],
+            capture_output=True,
+            text=True
+        )
+        if compile_result.returncode == 0:
+            with open(input_file_path, "r") as input_file:
+                with open(output_file_path, "w") as output_file:
+                    subprocess.run(
+                        [str(executable_path)],
+                        stdin=input_file,
+                        stdout=output_file,
+                    )
+    elif language == "c":
+        executable_path = codes_dir / unique
+        compile_result = subprocess.run(
+            ["gcc", str(code_file_path), "-o", str(executable_path)],
             capture_output=True,
             text=True
         )
@@ -117,11 +135,13 @@ def run_code(language, code, input_data):
     with open(output_file_path, "r") as output_file:
         output_data = output_file.read()
     
+    # Clean up
     os.remove(code_file_path)
     os.remove(input_file_path)
     os.remove(output_file_path)
 
     return output_data
+
 
 def check_test_cases(code_submission):
     question = code_submission.question

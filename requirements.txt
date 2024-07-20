@@ -1,0 +1,7 @@
+Django==4.2.10
+asgiref==3.8.1
+# Add other dependencies here
+
+sqlparse==0.5.1
+tzdata==2024.1
+typing_extensions==4.12.0
