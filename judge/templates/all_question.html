@@ -11,20 +11,22 @@
     <link rel="icon" href="{% static 'favicon.ico' %}" type="image/x-icon">
     <style>
         body {
-            background-color: #f0f0f0;
-            color: #333;
-            font-family: Arial, sans-serif;
+            background-color: #e0f7fa;
+            color: #004d40;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            transition: background-color 0.3s, color 0.3s;
         }
         .container {
-            background-color: #fff;
+            background-color: #ffffff;
             border-radius: 10px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
             padding: 20px;
             position: relative;
             margin-top: 20px;
+            border: 2px solid #00796b;
         }
         h1 {
-            color: #0e0f0f;
+            color: #00695c;
             text-align: center;
             margin-bottom: 20px;
         }
@@ -32,25 +34,76 @@
             background-color: #ffffff;
         }
         .table th {
-            background-color: #007bff;
+            background-color: #00796b;
             color: #fff;
         }
         .table td {
-            background-color: #f8f9fa;
-            color: #333;
+            background-color: #e0f2f1;
+            color: #004d40;
         }
         .alert-warning {
-            background-color: #ffeeba;
-            color: #856404;
+            background-color: #ffe082;
+            color: #e65100;
         }
-        .logout-box {
+        .logout-box, .dark-mode-toggle {
             position: absolute;
             top: 10px;
+        }
+        .logout-box {
             right: 10px;
+        }
+        .dark-mode-toggle {
+            left: 10px;
+        }
+        .dark-mode {
+            background-color: #263238;
+            color: #eceff1;
+        }
+        .dark-mode .container {
+            background-color: #37474f;
+            box-shadow: 0 4px 12px rgba(255, 255, 255, 0.1);
+            border: 2px solid #00695c;
+        }
+        .dark-mode h1 {
+            color: #b2dfdb;
+        }
+        .dark-mode .table {
+            background-color: #37474f;
+        }
+        .dark-mode .table th {
+            background-color: #00695c;
+        }
+        .dark-mode .table td {
+            background-color: #455a64;
+            color: #b2dfdb;
+        }
+        .dark-mode .alert-warning {
+            background-color: #ff6f00;
+            color: #ffe082;
+        }
+        .btn {
+            transition: background-color 0.3s, color 0.3s;
+        }
+        .btn-secondary {
+            background-color: #00796b;
+            color: #ffffff;
+        }
+        .btn-secondary:hover {
+            background-color: #004d40;
+        }
+        .btn-danger {
+            background-color: #d32f2f;
+            color: #ffffff;
+        }
+        .btn-danger:hover {
+            background-color: #b71c1c;
         }
     </style>
 </head>
 <body>
+    <div class="dark-mode-toggle">
+        <button id="dark-mode-toggle" class="btn btn-secondary">Dark Mode</button>
+    </div>
     <div class="logout-box">
         <a href="/auth/logout/" class="btn btn-danger">Logout</a>
     </div>
@@ -83,5 +136,11 @@
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
     <script src="{% static 'index.js' %}"></script>
+    <script>
+        const toggleButton = document.getElementById('dark-mode-toggle');
+        toggleButton.addEventListener('click', () => {
+            document.body.classList.toggle('dark-mode');
+        });
+    </script>
 </body>
 </html>
