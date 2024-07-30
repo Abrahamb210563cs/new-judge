@@ -54,6 +54,7 @@
         }
         .card-text {
             color: #495057; /* Dark gray card text */
+            white-space: pre-wrap; /* Preserve white space and new lines */
         }
         .form-group {
             margin-bottom: 20px;
@@ -83,18 +84,18 @@
             padding: 15px;
             border: 1px solid #dee2e6;
             border-radius: 5px;
-            white-space: pre-wrap;
+            white-space: pre-wrap; /* Preserve white space and new lines */
         }
         .verdict-box {
-    width: 25%; /* Quarter the size of the container */
-    padding: 5px;
-    border-radius: 5px;
-    color: #fff;
-    text-align: center;
-    font-size: 1rem;
-    font-weight: bold;
-    margin: 10px auto; /* Center the box horizontally */
-}
+            width: 25%; /* Quarter the size of the container */
+            padding: 5px;
+            border-radius: 5px;
+            color: #fff;
+            text-align: center;
+            font-size: 1rem;
+            font-weight: bold;
+            margin: 10px auto; /* Center the box horizontally */
+        }
         .verdict-accepted {
             background-color: #28a745; /* Green background for accepted verdict */
         }
@@ -167,7 +168,7 @@
                 <div class="card">
                     <div class="card-body">
                         <h5 class="card-title">Statement</h5>
-                        <p class="card-text">{{ question.statement }}</p>
+                        <p class="card-text">{{ question.statement|linebreaksbr }}</p>
                     </div>
                 </div>
             </div>

@@ -61,7 +61,13 @@ def question_details(request, question_id):
     }
     return render(request, 'question_details.html', context)
 
-def run_code(language, code, input_data):
+import os
+import subprocess
+import uuid
+from pathlib import Path
+from django.conf import settings
+
+def run_code(language, code, input_data, time_limit=3):
     project_path = Path(settings.BASE_DIR)
     directories = ("codes", "inputs", "outputs")
 
@@ -92,53 +98,62 @@ def run_code(language, code, input_data):
     with open(input_file_path, "w") as input_file:
         input_file.write(input_data)
 
-    # Compile and run based on language
-    if language == "cpp":
-        executable_path = codes_dir / unique
-        compile_result = subprocess.run(
-            ["g++", str(code_file_path), "-o", str(executable_path)],
-            capture_output=True,
-            text=True
-        )
-        if compile_result.returncode == 0:
+    try:
+        if language == "cpp":
+            executable_path = codes_dir / unique
+            compile_result = subprocess.run(
+                ["g++", str(code_file_path), "-o", str(executable_path)],
+                capture_output=True,
+                text=True,
+                timeout=time_limit
+            )
+            if compile_result.returncode == 0:
+                with open(input_file_path, "r") as input_file:
+                    with open(output_file_path, "w") as output_file:
+                        subprocess.run(
+                            [str(executable_path)],
+                            stdin=input_file,
+                            stdout=output_file,
+                            timeout=time_limit
+                        )
+        elif language == "c":
+            executable_path = codes_dir / unique
+            compile_result = subprocess.run(
+                ["gcc", str(code_file_path), "-o", str(executable_path)],
+                capture_output=True,
+                text=True,
+                timeout=time_limit
+            )
+            if compile_result.returncode == 0:
+                with open(input_file_path, "r") as input_file:
+                    with open(output_file_path, "w") as output_file:
+                        subprocess.run(
+                            [str(executable_path)],
+                            stdin=input_file,
+                            stdout=output_file,
+                            timeout=time_limit
+                        )
+        elif language == "py":
             with open(input_file_path, "r") as input_file:
                 with open(output_file_path, "w") as output_file:
                     subprocess.run(
-                        [str(executable_path)],
+                        ["python", str(code_file_path)],
                         stdin=input_file,
                         stdout=output_file,
+                        timeout=time_limit
                     )
-    elif language == "c":
-        executable_path = codes_dir / unique
-        compile_result = subprocess.run(
-            ["gcc", str(code_file_path), "-o", str(executable_path)],
-            capture_output=True,
-            text=True
-        )
-        if compile_result.returncode == 0:
-            with open(input_file_path, "r") as input_file:
-                with open(output_file_path, "w") as output_file:
-                    subprocess.run(
-                        [str(executable_path)],
-                        stdin=input_file,
-                        stdout=output_file,
-                    )
-    elif language == "py":
-        with open(input_file_path, "r") as input_file:
-            with open(output_file_path, "w") as output_file:
-                subprocess.run(
-                    ["python", str(code_file_path)],
-                    stdin=input_file,
-                    stdout=output_file,
-                )
 
-    with open(output_file_path, "r") as output_file:
-        output_data = output_file.read()
-    
+        with open(output_file_path, "r") as output_file:
+            output_data = output_file.read()
+    except subprocess.TimeoutExpired:
+        output_data = "Time Limit Exceeded"
+
     # Clean up
     os.remove(code_file_path)
     os.remove(input_file_path)
     os.remove(output_file_path)
+    if language in ["cpp", "c"] and os.path.exists(executable_path):
+        os.remove(executable_path)
 
     return output_data
 
@@ -152,6 +167,7 @@ def check_test_cases(code_submission):
         input_data = test_case.input
         expected_output = test_case.expected_output
         user_output = run_code(code_submission.language, code_submission.code, input_data)
+        
         
         if user_output.strip() != expected_output.strip():
             verdict = "Rejected"
